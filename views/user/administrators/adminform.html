@@ -1,0 +1,102 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>assets 管理员 iframe 框</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="../../../assets/layui/css/layui.css" media="all">
+</head>
+<body>
+
+  <div class="layui-form" lay-filter="assets-form-admin" id="assets-form-admin" style="padding: 20px 30px 0 0;">
+    <div class="layui-form-item">
+      <label class="layui-form-label">用户名</label>
+      <div class="layui-input-inline">
+        <input type="text" name="username" lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">密码</label>
+      <div class="layui-input-inline">
+        <input type="password" name="password" lay-verify="pass" placeholder="请输入密码" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">姓名</label>
+      <div class="layui-input-inline">
+        <input type="text" name="realName" lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">手机</label>
+      <div class="layui-input-inline">
+        <input type="text" name="phone" lay-verify="phone" placeholder="请输入手机号码" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">邮箱</label>
+      <div class="layui-input-inline">
+        <input type="text" name="email" lay-verify="email" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">性别</label>
+      <div class="layui-input-inline">
+        <select name="sex">
+          <option value="1">女</option>
+          <option value="2">男</option>
+        </select>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">角色</label>
+      <div class="layui-input-inline">
+        <select name="roleId" lay-verify="roleId">
+          <option value="-1">全部角色</option>
+        </select>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">状态</label>
+      <div class="layui-input-inline">
+        <input type="checkbox" lay-filter="switch" checked="checked" name="status" lay-skin="switch" lay-text="已激活|已锁定">
+      </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+      <input type="submit" lay-submit lay-filter="LAY-user-submit" id="LAY-user-submit" value="确认">
+    </div>
+  </div>
+
+  <script src="../../../assets/layui/layui.js"></script>  
+  <script>
+  layui.config({
+    base: '../../../assets/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'form'], function(){
+    var $ = layui.$
+    ,form = layui.form;
+
+
+
+      //自定义验证规则
+      form.verify({
+          pass: [
+              /^[\S]{6,12}$/
+              ,'密码必须6到12位，且不能出现空格'
+          ]
+          ,role: function(value){
+              if(value<0){
+                  return "请选择一个角色"
+              }
+          }
+      });
+
+  })
+  </script>
+</body>
+</html>

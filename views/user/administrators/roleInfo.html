@@ -1,0 +1,66 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>assets 管理员 iframe 框</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../assets/layui/css/layui.css" media="all">
+</head>
+<body>
+
+<div class="layui-form" lay-filter="assets-form-admin" id="assets-form-admin" style="padding: 40px 60px;">
+    <div class="layui-form-item">
+        <label class="layui-form-label">角色名称</label>
+        <div class="layui-input-inline">
+            <input type="text" name="name" lay-verify="required" placeholder="请输入角色名" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">角色类型</label>
+        <div class="layui-input-inline">
+            <input type="text" name="code" value="role_" lay-verify="required" placeholder="请输入角色类型" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">状态</label>
+        <div class="layui-input-inline">
+            <input type="checkbox" lay-filter="switch" name="status" lay-skin="switch" lay-text="已激活|已锁定">
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="submit" lay-submit lay-filter="LAY-role-submit" id="LAY-role-submit" value="确认">
+    </div>
+</div>
+
+<script src="../../../assets/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '../../../assets/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'form'], function(){
+        var $ = layui.$
+            ,form = layui.form;
+
+        //自定义验证规则
+        form.verify({
+            pass: [
+                /^[\S]{6,12}$/
+                ,'密码必须6到12位，且不能出现空格'
+            ]
+            ,role: function(value){
+                if(value<0){
+                    return "请选择一个角色"
+                }
+            }
+        });
+
+    })
+</script>
+</body>
+</html>
