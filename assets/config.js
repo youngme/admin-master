@@ -12,6 +12,7 @@ layui.define(['laytpl', 'layer', 'element', 'util'], function(exports){
     container: 'LAY_app' //容器ID
     ,base: layui.cache.base //记录静态资源所在路径
     ,reqBase:'http://localhost:8080/'
+    // ,reqBase:'http://47.94.162.219:8080/'
     ,views: layui.cache.base + 'tpl/' //动态模板所在目录
     ,entry: 'index' //默认视图文件名
     ,engine: '.html' //视图文件后缀名
@@ -25,6 +26,8 @@ layui.define(['laytpl', 'layer', 'element', 'util'], function(exports){
     ,tokenKey:'tokenKey'
     ,MOD_NAME: 'admin' //模块事件名
     ,roleKey:"roleKey"
+    ,aboutHtml:"../../views/tpl/system/about"//关于介绍的地址路径
+    ,themeHtml:"../../views/tpl/system/theme"//关于主题的地址路径
     ,debug: true //是否开启调试模式。如开启，接口异常时会抛出异常 URL 等信息
 
     //自定义请求字段
@@ -129,6 +132,28 @@ layui.define(['laytpl', 'layer', 'element', 'util'], function(exports){
       //初始的颜色索引，对应上面的配色方案数组索引
       //如果本地已经有主题色记录，则以本地记录为优先，除非请求本地数据（localStorage）
       ,initColorIndex: 0
+    },
+     formatDate:function(date, fmt) {
+          if (/(y+)/.test(fmt)) {
+              fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
+          }
+          let o = {
+              'M+': date.getMonth() + 1,
+              'd+': date.getDate(),
+              'h+': date.getHours(),
+              'm+': date.getMinutes(),
+              's+': date.getSeconds()
+          };
+          for (let k in o) {
+              if (new RegExp(`(${k})`).test(fmt)) {
+                  let str = o[k] + '';
+                  fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? str : this.padLeftZero(str));
+              }
+          }
+          return fmt;
+      },
+      padLeftZero:function(str) {
+        return ('00' + str).substr(str.length);
     }
   });
 });

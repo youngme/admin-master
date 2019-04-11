@@ -1,0 +1,260 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../assets/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../assets/style/admin.css" media="all">
+    <link rel="stylesheet" href="../../../assets/style/base.css" media="all">
+</head>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <fieldset class="layui-elem-field">
+                <legend><span id="LAY-salary-title" class="salary-title"></span></legend>
+                <div class="layui-field-box" style="position: relative;">
+                    <div class="layui-form-item">
+                        <!--<div class="layui-inline">-->
+                        <!--<label class="layui-form-label">用户名</label>-->
+                        <!--<div class="layui-input-block">-->
+                        <!--<input type="text" name="realName" placeholder="请输入" autocomplete="off" class="layui-input">-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="layui-inline">-->
+                        <!--<label class="layui-form-label">角色</label>-->
+                        <!--<div class="layui-input-block">-->
+                        <!--<select name="role">-->
+                        <!--<option value="-1">全部角色</option>-->
+                        <!--</select>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <div class="layui-inline">
+                            <label class="layui-form-label">薪资月份</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="createTime" class="layui-input" id="LAY-createTime" placeholder="选择要查询的月份">
+                            </div>
+                        </div>
+                        <!--<div class="layui-inline">-->
+                        <!--<button class="layui-btn layui-btn-normal" lay-submit lay-filter="LAY-user-back-search">-->
+                        <!--<i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>-->
+                        <!--</button>-->
+                        <!--</div>-->
+
+                        <button class="layui-btn layui-btn-warm layui-btn-radius out-btn" lay-submit  lay-filter="LAY-export-excel">
+                            <i class="layui-icon layui-icon-upload-drag  layuiadmin-button-btn"></i>
+                            Excel
+                        </button>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+        <div class="layui-card-body">
+            <!--<div style="padding-bottom: 10px;">-->
+                <!--<button class="layui-btn user-btn-manage layui-btn-danger" data-type="batchdel">批量删除</button>-->
+                <!--<button class="layui-btn user-btn-manage" data-type="add">添加</button>-->
+            <!--</div>-->
+
+            <table id="PAGE-salary-list" lay-filter="PAGE-salary-list"></table>
+
+            <script type="text/html" id="table-useradmin-admin">
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+                {{#  if(d.role == '超级管理员'){ }}
+                <a class="layui-btn layui-btn-disabled layui-btn-xs"><i class="layui-icon layui-icon-delete"></i>删除</a>
+                {{#  } else { }}
+                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+                {{#  } }}
+            </script>
+        </div>
+    </div>
+</div>
+
+<script src="../../../assets/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '../../../assets/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'salary', 'table','laydate'], function(){
+        var $ = layui.$
+            ,form = layui.form
+            ,table = layui.table
+            ,setter = layui.setter
+            ,admin = layui.admin
+            ,laydate = layui.laydate;
+
+        var roleList = layui.sessionData(setter.roleKey);
+        if(roleList){
+            var list = roleList.roleKey;
+            for (let i = 0; i < list.length; i++) {
+                var option = '<option value="'+list[i].id+'">'+list[i].name+'</option>';
+                $("select[name='role']").append(option);
+            }
+            form.render("select");
+        }
+
+        $("#LAY-salary-title").html(setter.formatDate(new Date(),"yyyy年MM月")+"份-工资单");
+
+        //年月选择器
+        laydate.render({
+            elem: '#LAY-createTime'
+            ,type: 'month'
+            ,theme: '#4FC3F7'
+            ,value: new Date()
+            ,done: function(value, date){
+                // layer.alert('你选择的日期是：' + value + '<br>获得的对象是' + JSON.stringify(date));
+                $("#LAY-salary-title").html(date.year+"年"+date.month+"月份-工资单");
+                var field ={
+                    createTime:new Date(value)
+                };
+                table.reload('PAGE-salary-list', {
+                    where: field
+                });
+            }
+        });
+
+        //监听搜索
+        form.on('submit(LAY-user-back-search)', function(data){
+            // var field = data.field;
+            // field.createTime = new Date(field.createTime);
+            // console.log(field);
+            // //执行重载
+            // table.reload('PAGE-salary-list', {
+            //     where: field
+            // });
+        });
+
+        //监听导出
+        form.on('submit(LAY-export-excel)', function(data){
+            // var param={
+            //     createTime:new Date($("#LAY-createTime").val()),
+            //     fileName:$("#LAY-salary-titl").text()
+            // }
+            location.href=layui.setter.reqBase + 'salary/getExcel?createTime='+$("#LAY-createTime").val()+"-15"+
+                    '&fileName='+$("#LAY-salary-title").text()
+            // admin.req({
+            //     url: layui.setter.reqBase + 'salary/getExcel' //实际使用请改成服务端真实接口
+            //     ,data: param
+            //     ,dataType:"json"
+            //     ,type:'GET'
+            //     ,timeout:5000
+            //     ,cache:false
+            //     ,crossDomain:true
+            //     ,beforeSend: function(xhr) {
+            //         xhr.withCredentials = true;
+            //     }
+            //     ,done: function(result){
+            //         //请求成功后，写入 access_token
+            //         if (result.code == 200) {
+            //             layer.msg('工资单导出成功',{icon: 1});
+            //         }else{
+            //             layer.msg('工资单导出失败',{icon: 2});
+            //         }
+            //     }
+            // });
+        });
+
+        //事件
+        var active = {
+            batchdel: function(){
+                var checkStatus = table.checkStatus('PAGE-salary-list')
+                    ,checkData = checkStatus.data; //得到选中的数据
+
+                if(checkData.length === 0){
+                    return layer.msg('请选择数据');
+                }
+
+                layer.prompt({
+                    formType: 1
+                    ,title: '敏感操作，请验证口令'
+                }, function(value, index){
+                    layer.close(index);
+
+                    layer.confirm('确定删除吗？', function(index) {
+
+                        //执行 Ajax 后重载
+                        /*
+                        admin.req({
+                          url: 'xxx'
+                          //,……
+                        });
+                        */
+                        table.reload('PAGE-salary-list');
+                        layer.msg('已删除');
+                    });
+                });
+            }
+            ,add: function(){
+                layer.open({
+                    type: 2
+                    ,title: '添加用户'
+                    ,content: 'adminform.html'
+                    ,area: ['440px', '540px']
+                    ,btn: ['确定', '取消']
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submitID = 'LAY-user-submit'
+                            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                        //监听提交
+                        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                            var field = data.field; //获取提交的字段
+                            field.status = data.field.status=="on"?1:0;
+                            //提交 Ajax 成功后，静态更新表格中的数据
+                            //获取角色列表
+                            admin.req({
+                                url: layui.setter.reqBase + 'user/save'
+                                ,dataType:"json"
+                                ,data:field
+                                ,type:'POST'
+                                ,timeout:5000
+                                ,cache:false
+                                ,crossDomain:true
+                                ,beforeSend: function(xhr) {
+                                    xhr.withCredentials = true;
+                                }
+                                ,done: function(result){
+                                    layer.msg('添加成功', {
+                                        offset: '15px'
+                                        ,icon: 1
+                                        ,time: 1000
+                                    });
+                                    table.reload("PAGE-salary-list"); //数据刷新
+                                    layer.close(index); //关闭弹层
+                                }
+                            });
+                        });
+
+                        submit.trigger('click');
+                    }
+                    ,success:function(layero,index){
+                        var body = layui.layer.getChildFrame('body', index);
+                        var roleList = layui.sessionData(layui.setter.roleKey);
+                        if(roleList){
+                            var list = roleList.roleKey;
+                            for (let i = 0; i < list.length; i++) {
+                                var option = '<option value="'+list[i].id+'">'+list[i].name+'</option>';
+                                body.find("select[name='roleId']").append(option);
+                            };
+                        }
+                        form.render("select");
+
+                    }
+                });
+            }
+        }
+        $('.layui-btn.user-btn-manage').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+    });
+</script>
+</body>
+</html>
+
