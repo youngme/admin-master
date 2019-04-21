@@ -15,25 +15,21 @@ layui.define(["laytpl", "layer"],
                 this.id = e,
                     this.container = t("#" + (e || s))
             };
-        i.loading = function(e) {
+        i.loading = function (e) {
             e.append(this.elemLoad = t('<i class="layui-anim layui-anim-rotate layui-anim-loop layui-icon layui-icon-loading layadmin-loading"></i>'))
         },
-            i.removeLoad = function() {
+            i.removeLoad = function () {
                 this.elemLoad && this.elemLoad.remove()
             },
-            i.exit = function(e) {
-                layui.data(r.tableName, {
-                    key: r.request.tokenName,
-                    remove: !0
-                }),
-                e && e()
+            i.exit = function (e) {
+                // window.location=location.origin+r.logoutHtml;
             },
-            i.req = function(e) {
+            i.req = function (e) {
                 var a = e.success,
                     n = (e.error, r.request),
                     o = r.response,
-                    s = function() {
-                        return r.debug ? "<br><cite>URL：</cite>" + e.url: ""
+                    s = function () {
+                        return r.debug ? "<br><cite>URL：</cite>" + e.url : ""
                     };
                 if (e.data = e.data || {},
                     e.headers = e.headers || {},
@@ -47,25 +43,37 @@ layui.define(["laytpl", "layer"],
                     t.ajax(t.extend({
                             type: "get",
                             dataType: "json",
-                            success: function(t) {
+                            success: function (t) {
+                                console.log(t);
                                 var n = o.statusCode;
-                                if (t[o.statusName] == n.ok)"function" == typeof e.done && e.done(t);
+                                if (t[o.statusName] == n.ok) "function" == typeof e.done && e.done(t);
                                 else if (t[o.statusName] == n.logout) i.exit();
+                                else if(t.code == n.unAuthor) i.unAuthor(t.msg);
                                 else {
                                     var r = ["<cite>Error：</cite> " + (t[o.msgName] || "返回状态码异常"), s()].join("");
-                                    i.error(r)
+                                    if (e.failed) {
+                                        e.failed(e, r);
+                                    } else {
+                                        i.error(r);
+                                    }
+
                                 }
                                 "function" == typeof a && a(t)
                             },
-                            error: function(e, t) {
+                            error: function (e, t) {
+                                console.log(e);
                                 var a = ["请求异常，请重试<br><cite>错误信息：</cite>" + t, s()].join("");
-                                i.error(a),
+                                if (e.failed) {
+                                    e.failed(e, a);
+                                } else {
+                                    i.error(a);
+                                }
                                 "function" == typeof a && a(res)
                             }
                         },
                         e))
             },
-            i.popup = function(e) {
+            i.popup = function (e) {
                 var a = e.success,
                     r = e.skin;
                 return delete e.success,
@@ -75,14 +83,14 @@ layui.define(["laytpl", "layer"],
                             title: "提示",
                             content: "",
                             id: "LAY-system-view-popup",
-                            skin: "layui-layer-admin" + (r ? " " + r: ""),
+                            skin: "layui-layer-admin" + (r ? " " + r : ""),
                             shadeClose: !0,
                             closeBtn: !1,
-                            success: function(e, r) {
+                            success: function (e, r) {
                                 var o = t('<i class="layui-icon" close>&#x1006;</i>');
                                 e.append(o),
                                     o.on("click",
-                                        function() {
+                                        function () {
                                             n.close(r)
                                         }),
                                 "function" == typeof a && a.apply(this, arguments)
@@ -90,7 +98,7 @@ layui.define(["laytpl", "layer"],
                         },
                         e))
             },
-            i.error = function(e, a) {
+            i.error = function (e, a) {
                 return i.popup(t.extend({
                         content: e,
                         maxWidth: 300,
@@ -99,6 +107,9 @@ layui.define(["laytpl", "layer"],
                         id: "LAY_adminError"
                     },
                     a))
+            },
+            i.unAuthor = function (m) {
+                layer.alert(m,{icon:2});
             },
             d.prototype.render = function(e, a) {
                 var n = this;

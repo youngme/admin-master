@@ -1,10 +1,274 @@
+
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="utf-8">
+    <title>assets 管理员 iframe 框</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../assets/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../assets/style/admin.css" media="all">
+    <link rel="stylesheet" href="../../../assets/style/define.css" media="all">
 </head>
 <body>
+<div class="layui-fluid" style="padding: 0px;">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <fieldset class="layui-elem-field">
+                <legend><span id="LAY-salary-title" class="salary-title"></span></legend>
+                <div class="layui-field-box" style="position: relative;">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">财务月份</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="createTime" class="layui-input" id="LAY-createTime" placeholder="选择要查询的月份">
+                            </div>
+                        </div>
+                        <button class="layui-btn layui-btn-warm layui-btn-radius out-btn" lay-submit  lay-filter="LAY-export-excel">
+                            <i class="layui-icon layui-icon-upload-drag  layuiadmin-button-btn"></i>
+                            Excel
+                        </button>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div class="layui-card-body">
+<input type="hidden" name="itemId" id="ID-itemId">
+<div class="layui-tab layui-tab-brief" lay-filter="LAY-items">
+    <ul class="layui-tab-title">
+        <li class="layui-this">现金入账</li>
+        <li>其它欠款</li>
+        <li>材料采购</li>
+        <li>灶务采购</li>
+        <li>杂工工资</li>
+        <li>管理工资</li>
+        <li>差旅招待</li>
+        <li>办公用品</li>
+        <li>机械消耗</li>
+        <li>机械耗油</li>
+        <li>其他费用</li>
+    </ul>
+    <!--现金入账-->
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            <div class="layui-card-body">
+                <div style="padding-bottom: 10px;">
+                    <button class="layui-btn user-btn-manage layui-btn-del" data-type="delCash">批量删除</button>
+                    <button class="layui-btn user-btn-manage layui-btn-add" data-type="addCash">新增</button>
+                </div>
 
+                <table id="PAGE-cash-list" lay-filter="PAGE-cash-list"></table>
+                <script type="text/html" id="table-cash-admin">
+                    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs"><i class="layui-icon layui-icon-delete"></i>删除</a>
+                </script>
+            </div>
+        </div>
+        <!--其它欠款-->
+        <div class="layui-tab-item">
+            <div class="layui-card-body">
+                <div style="padding-bottom: 10px;">
+                    <button class="layui-btn user-btn-manage layui-btn-danger" data-type="delDebt">批量删除</button>
+                    <button class="layui-btn user-btn-manage" data-type="addDebt">欠款入账</button>
+                </div>
+
+                <table id="PAGE-debt-list" lay-filter="PAGE-debt-list"></table>
+                <script type="text/html" id="table-debt-admin">
+                    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs"><i class="layui-icon layui-icon-delete"></i>删除</a>
+                </script>
+            </div>
+        </div>
+        <!--材料采购-->
+        <div class="layui-tab-item">
+            <div class="layui-card-body">
+                <div style="padding-bottom: 10px;">
+                    <button class="layui-btn user-btn-manage layui-btn-danger" data-type="delMaterials">批量删除</button>
+                    <button class="layui-btn user-btn-manage" data-type="addMaterials">材料采购</button>
+                </div>
+
+                <table id="PAGE-materials-list" lay-filter="PAGE-materials-list"></table>
+                <script type="text/html" id="table-materials-admin">
+                    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs"><i class="layui-icon layui-icon-delete"></i>删除</a>
+                </script>
+            </div>
+        </div>
+        <!--灶务采购-->
+        <div class="layui-tab-item">
+            <div class="layui-card-body">
+                <div style="padding-bottom: 10px;">
+                    <button class="layui-btn user-btn-manage layui-btn-danger" data-type="delRepast">批量删除</button>
+                    <button class="layui-btn user-btn-manage" data-type="addRepast">灶务采购</button>
+                </div>
+
+                <table id="PAGE-repast-list" lay-filter="PAGE-repast-list"></table>
+                <script type="text/html" id="table-repast-admin">
+                    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs"><i class="layui-icon layui-icon-delete"></i>删除</a>
+                </script>
+            </div>
+        </div>
+        <!--杂工工资-->
+        <div class="layui-tab-item">
+            <div class="layui-card-body">
+                <div style="padding-bottom: 10px;">
+                    <button class="layui-btn user-btn-manage layui-btn-danger" data-type="delBackMan">批量删除</button>
+                    <button class="layui-btn user-btn-manage" data-type="addBackMan">杂工工资</button>
+                </div>
+
+                <table id="PAGE-backMan-list" lay-filter="PAGE-backMan-list"></table>
+                <script type="text/html" id="table-backMan-admin">
+                    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs"><i class="layui-icon layui-icon-delete"></i>删除</a>
+                </script>
+            </div>
+        </div>
+        <!--管理工资-->
+        <div class="layui-tab-item">
+            <div class="layui-card-body">
+                <div style="padding-bottom: 10px;">
+                    <button class="layui-btn user-btn-manage layui-btn-danger" data-type="delManage">批量删除</button>
+                    <button class="layui-btn user-btn-manage" data-type="addManage">管理工资</button>
+                </div>
+
+                <table id="PAGE-manage-list" lay-filter="PAGE-manage-list"></table>
+                <script type="text/html" id="table-manage-admin">
+                    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs"><i class="layui-icon layui-icon-delete"></i>删除</a>
+                </script>
+            </div>
+        </div>
+        <!--差旅招待-->
+        <div class="layui-tab-item">
+            <div class="layui-card-body">
+                <div style="padding-bottom: 10px;">
+                    <button class="layui-btn user-btn-manage layui-btn-danger" data-type="delTravel">批量删除</button>
+                    <button class="layui-btn user-btn-manage" data-type="addTravel">差旅招待</button>
+                </div>
+
+                <table id="PAGE-travel-list" lay-filter="PAGE-travel-list"></table>
+                <script type="text/html" id="table-travel-admin">
+                    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs"><i class="layui-icon layui-icon-delete"></i>删除</a>
+                </script>
+            </div>
+        </div>
+        <!--办公用品-->
+        <div class="layui-tab-item">
+            <div class="layui-card-body">
+                <div style="padding-bottom: 10px;">
+                    <button class="layui-btn user-btn-manage layui-btn-danger" data-type="delWork">批量删除</button>
+                    <button class="layui-btn user-btn-manage" data-type="addWork">办公用品</button>
+                </div>
+
+                <table id="PAGE-work-list" lay-filter="PAGE-work-list"></table>
+                <script type="text/html" id="table-work-admin">
+                    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs"><i class="layui-icon layui-icon-delete"></i>删除</a>
+                </script>
+            </div>
+        </div>
+        <!--机械消耗-->
+        <div class="layui-tab-item">
+            <div class="layui-card-body">
+                <div style="padding-bottom: 10px;">
+                    <button class="layui-btn user-btn-manage layui-btn-danger" data-type="delCar">批量删除</button>
+                    <button class="layui-btn user-btn-manage" data-type="addCar">机械消耗</button>
+                </div>
+
+                <table id="PAGE-car-list" lay-filter="PAGE-car-list"></table>
+                <script type="text/html" id="table-car-admin">
+                    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs"><i class="layui-icon layui-icon-delete"></i>删除</a>
+                </script>
+            </div>
+        </div>
+        <!--机械耗油-->
+        <div class="layui-tab-item">
+            <div class="layui-card-body">
+                <div style="padding-bottom: 10px;">
+                    <button class="layui-btn user-btn-manage layui-btn-danger" data-type="delOilConsumption">批量删除</button>
+                    <button class="layui-btn user-btn-manage" data-type="addOilConsumption">机械耗油</button>
+                </div>
+
+                <table id="PAGE-oilConsumption-list" lay-filter="PAGE-oilConsumption-list"></table>
+                <script type="text/html" id="table-oilConsumption-admin">
+                    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs"><i class="layui-icon layui-icon-delete"></i>删除</a>
+                </script>
+            </div>
+        </div>
+        <!--其他费用-->
+        <div class="layui-tab-item">
+            <div class="layui-card-body">
+                <div style="padding-bottom: 10px;">
+                    <button class="layui-btn user-btn-manage layui-btn-danger" data-type="delElseExpense">批量删除</button>
+                    <button class="layui-btn user-btn-manage" data-type="addElseExpense">其他费用</button>
+                </div>
+
+                <table id="PAGE-elseExpense-list" lay-filter="PAGE-elseExpense-list"></table>
+                <script type="text/html" id="table-elseExpense-admin">
+                    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs"><i class="layui-icon layui-icon-delete"></i>删除</a>
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+        </div>
+    </div>
+</div>
+<script src="../../../assets/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '../../../assets/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'form','element', 'table','laydate','finance/iteminfo'
+        ,'finance/itemadmin','finance/itemearning','finance/itemexpense'], function(){
+        var $ = layui.$
+            , form = layui.form
+            , setter = layui.setter
+            , table = layui.table
+            , laydate = layui.laydate
+            , admin = layui.admin
+            ,financeSetter = layui.financeSetter
+            , reqSetter = layui.reqSetter
+            , element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+        //年月选择器
+        laydate.render({
+            elem: '#LAY-createTime'
+            ,type: 'month'
+            ,format: 'yyyy年MM月'
+            ,theme: '#4FC3F7'
+            ,value: new Date()
+            ,done: function(value, date){
+                // layer.alert('你选择的日期是：' + value + '<br>获得的对象是' + JSON.stringify(date));
+                $("#LAY-salary-title").html(value+"份-财务信息");
+                var field ={
+                    createTime:new Date(value)
+                };
+                // table.reload('PAGE-salary-list', {
+                //     where: field
+                // });
+            }
+        });
+        $("#LAY-salary-title").html($("#LAY-createTime").val()+"份-项目财务信息");
+
+        //选项卡事件监听
+        element.on('tab(LAY-items)', function(elem){
+            console.log(elem.index);
+            switch (elem.index) {
+                case 0:
+                    table.reload("PAGE-cash-list"); //现金收入数据刷新
+                    break;
+            }
+        });
+
+    });
+</script>
 </body>
 </html>

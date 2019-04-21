@@ -3,46 +3,47 @@ layui.define(["table", "form"],
         var t = layui.$,
             table = layui.table,
             setter = layui.setter,
+            reqSetter = layui.reqSetter,
             form = layui.form,
             admin = layui.admin,
             layer = layui.layer;
         //初始化用户信息分页
         table.render({
             elem: "#PAGE-salary-list",
-            url: layui.setter.reqBase + "salary/pageList",
+            url: reqSetter.requestPath.salaryPageApi,
             loading:true,
             headers:{
-                username:'admin',
+                username: layui.data(setter.appIdKey).appIdKey,
                 deviceInfo:layui.device('myapp').os,
                 authorization:layui.data(setter.jwtKey).jwtKey
             },
             text: {
                 none: '当月暂无工资单' //默认：无数据。注：该属性为 layui 2.2.5 开始新增
             },
-            page: {
-                prev:'上一页',
-                next:'下一页',
-                first:'第一页',
-                last:'最后一页',
-                groups:5,
-                theme:'#29B6F6',
-                layout:['prev', 'page', 'next','limit','count','first','last']
-            }, //开启分页
-            // page:true,
+            page:true,
             parseData: function(res){ //res 即为原始返回的数据
-                // console.log(res);
-                if(res.code == 424){
-                    location.href="../login.html";
-                    return true;
+                if (setter.accessStatus(res,this)) {
+                    return false;
                 }
-                _$count=res.data.total;
-                // initPage();
+
                 return {
                     "code": 0, //解析接口状态
                     "msg": '获取数据成功', //解析提示文本
                     "count": res.data.total, //解析数据长度
                     "data": res.data.rows //解析数据列表
                 };
+            },
+            accessStatus: function (res) {
+                var status = setter.response.statusCode;
+                switch (res.code) {
+                    case status.logout:
+                        location.href="../login.html";
+                        return true;
+                    case status.unAuthor:
+                        this.text.none = res.msg;
+                        return true;
+
+                }
             },
             cols: [[{
                 type: "checkbox",
@@ -230,11 +231,16 @@ layui.define(["table", "form"],
                        }
                     }
                     admin.req({
-                        url: layui.setter.reqBase + 'salary/updateSalary' //实际使用请改成服务端真实接口
+                        url: reqSetter.requestPath.updateSalaryApi
                         ,data: param
                         ,dataType:"json"
                         ,type:'POST'
                         ,timeout:5000
+                        ,headers:{
+                            username: layui.data(setter.appIdKey).appIdKey,
+                            deviceInfo:layui.device('myapp').os,
+                            authorization:layui.data(setter.jwtKey).jwtKey
+                        }
                         ,cache:false
                         ,crossDomain:true
                         ,beforeSend: function(xhr) {

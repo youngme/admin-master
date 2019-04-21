@@ -1,0 +1,40 @@
+.layui-date-div {
+    height: 38px;
+    line-height: 38px;
+    cursor: pointer;
+    border: 1px solid #e2e2e2;
+    border-radius: 5px;
+    padding-left: 10px;
+}
+.layui-date-div-placeholder{
+    color: #777777;
+}
+.out-btn{
+    position: absolute;
+    right: 15px;
+    top: 12px;
+    background-color: #66BB6A !important;
+}
+
+.layui-layer-lan .layui-layer-title {
+    background: #F4D03F !important;
+    color: #fff;
+    border: none;
+}
+
+.layui-card .layui-tab-brief .layui-tab-title {
+    height: 42px;
+    border-bottom-color: #B3E5FC;
+    border-top-color: #B3E5FC;
+}
+.layui-tab-brief>.layui-tab-more li.layui-this:after, .layui-tab-brief>.layui-tab-title .layui-this:after {
+    border: none;
+    border-radius: 0;
+    border-bottom: 3px solid #3498DB;
+}
+.layui-btn-del {
+    background-color: #F44336;
+}
+.layui-btn-add {
+    background-color: #4CAF50;
+}

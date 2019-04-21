@@ -74,7 +74,7 @@
               <dd><a lay-href="set/user/info.html">基本资料</a></dd>
               <dd><a lay-href="set/user/password.html">修改密码</a></dd>
               <hr>
-              <dd layadmin-event="logout" style="text-align: center;"><a>退出</a></dd>
+              <dd id="LAY_logout" style="text-align: center;"><a>退出</a></dd>
             </dl>
           </li>
           
@@ -91,7 +91,7 @@
       <div class="layui-side layui-side-menu">
         <div class="layui-side-scroll">
           <div class="layui-logo" lay-href="home/home.html">
-            <span>Admin</span>
+            <span>小熊软件</span>
           </div>
           
           <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
@@ -127,11 +127,14 @@
                 <dd>
                   <a lay-href="user/administrators/role.html">角色管理</a>
                 </dd>
+                <dd>
+                  <a lay-href="user/administrators/permission.html">权限管理</a>
+                </dd>
               </dl>
             </li>
             <li data-name="compensation" class="layui-nav-item">
               <a href="javascript:;" lay-tips="用户管理" lay-direction="2">
-                <i class="layui-icon layui-icon-user"></i>
+                <i class="layui-icon layui-icon-component"></i>
                 <cite>综管中心</cite>
               </a>
               <dl class="layui-nav-child">
@@ -152,6 +155,17 @@
                 <!--</dd>-->
                 <dd>
                   <a lay-href="compensation/salary/list.html">月薪资单</a>
+                </dd>
+              </dl>
+            </li>
+            <li data-name="compensation" class="layui-nav-item">
+              <a href="javascript:;" lay-tips="财务管理" lay-direction="2">
+                <i class="layui-icon layui-icon-app"></i>
+                <cite>财务管理</cite>
+              </a>
+              <dl class="layui-nav-child">
+                <dd>
+                  <a lay-href="finance/items/list.html">项目财务</a>
                 </dd>
               </dl>
             </li>
@@ -503,13 +517,25 @@
     base: '../assets/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use(['index'],function(){
-      var admin = layui.admin;
+  }).use(['index','logout'],function(){
+      var admin = layui.admin
+          ,$ = layui.jquery
+          ,setter = layui.setter
+          ,reqSetter = layui.reqSetter;
+
+      $("#LAY_logout").click(() => {
+          logout();
+      });
       //获取角色列表
       admin.req({
-          url: layui.setter.reqBase + 'role/list'
+          url: reqSetter.requestPath.roleListApi
           ,dataType:"json"
           ,type:'GET'
+          ,headers:{
+                  username: layui.data(setter.appIdKey).appIdKey,
+                  deviceInfo:layui.device('myapp').os,
+                  authorization:layui.data(setter.jwtKey).jwtKey
+          }
           ,timeout:5000
           ,cache:false
           ,crossDomain:true

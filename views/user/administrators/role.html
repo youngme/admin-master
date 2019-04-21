@@ -59,15 +59,22 @@
     var $ = layui.$
     ,form = layui.form
     ,table = layui.table
-    ,admin = layui.admin;
+    ,admin = layui.admin
+    ,reqSetter = layui.reqSetter
+    ,setter = layui.setter;
 
 
       //获取角色列表
       admin.req({
-          url: layui.setter.reqBase + 'role/list'
+          url: reqSetter.requestPath.roleListApi
           ,dataType:"json"
           ,type:'GET'
           ,timeout:5000
+          ,headers:{
+              username: layui.data(setter.appIdKey).appIdKey,
+              deviceInfo:layui.device('myapp').os,
+              authorization:layui.data(setter.jwtKey).jwtKey
+          }
           ,cache:false
           ,crossDomain:true
           ,beforeSend: function(xhr) {
@@ -137,7 +144,7 @@
                 //提交 Ajax 成功后，静态更新表格中的数据
                 //获取角色列表
                 admin.req({
-                    url: layui.setter.reqBase + 'role/save'
+                    url: reqSetter.requestPath.saveRoleApi
                     ,dataType:"json"
                     ,data:field
                     ,type:'POST'

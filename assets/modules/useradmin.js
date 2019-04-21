@@ -3,35 +3,32 @@ layui.define(["table", "form"],
         var t = layui.$,
             table = layui.table,
             setter = layui.setter,
+            reqSetter = layui.reqSetter,
             form = layui.form;
         //初始化用户信息分页
         table.render({
                 elem: "#PAGE-user-list",
-                url: layui.setter.reqBase + "user/pageList",
+                url: reqSetter.requestPath.userPageApi,
                 loading:true,
                 headers:{
-                    username:'admin',
+                    username: layui.data(setter.appIdKey).appIdKey,
                     deviceInfo:layui.device('myapp').os,
                     authorization:layui.data(setter.jwtKey).jwtKey
                 },
-                page: {
-                    prev:'上一页',
-                    next:'下一页',
-                    first:'第一页',
-                    last:'最后一页',
-                    groups:5,
-                    theme:'#29B6F6',
-                    layout:['prev', 'page', 'next','limit','count','first','last']
-                }, //开启分页
-                // page:true,
+                // page: {
+                //     prev:'上一页',
+                //     next:'下一页',
+                //     first:'第一页',
+                //     last:'最后一页',
+                //     groups:5,
+                //     theme:'#29B6F6',
+                //     layout:['prev', 'page', 'next','limit','count','first','last']
+                // }, //开启分页
+                page:true,
                 parseData: function(res){ //res 即为原始返回的数据
-                    // console.log(res);
-                    if(res.code == 424){
-                        location.href="../login.html";
-                        return true;
+                    if (setter.accessStatus(res,this)) {
+                        return false;
                     }
-                    _$count=res.data.total;
-                    // initPage();
                     return {
                         "code": 0, //解析接口状态
                         "msg": '获取数据成功', //解析提示文本
@@ -166,30 +163,22 @@ layui.define(["table", "form"],
             //初始化角色分页
             table.render({
                 elem: "#PAGE-user-role",
-                url: layui.setter.reqBase + "role/pageList",
+                url: reqSetter.requestPath.rolePageApi,
                 loading:true,
                 headers:{
-                    username:'admin',
+                    username: layui.data(setter.appIdKey).appIdKey,
                     deviceInfo:layui.device('myapp').os,
                     authorization:layui.data(setter.jwtKey).jwtKey
                 },
-                page: {
-                    prev:'上一页',
-                    next:'下一页',
-                    first:'第一页',
-                    last:'最后一页',
-                    groups:5,
-                    theme:'#29B6F6',
-                    layout:['prev', 'page', 'next','limit','count','first','last']
-                }, //开启分页
+                text:{
+                    none:"无数据"
+                },
+                page: true,
                 parseData: function(res){ //res 即为原始返回的数据
-                    console.log(res);
-                    if(res.code == 424){
-                        location.href="../login.html";
-                        return true;
+                    if (setter.accessStatus(res,this)) {
+                        return false;
                     }
-                    _$count=res.data.total;
-                    // initPage();
+
                     return {
                         "code": 0, //解析接口状态
                         "msg": '获取数据成功', //解析提示文本
@@ -262,5 +251,113 @@ layui.define(["table", "form"],
                         })
                     }
                 }),
+
+
+        //初始化系统资源分页
+        table.render({
+            elem: "#PAGE-user-permission",
+            url: reqSetter.requestPath.permissionPageApi,
+            loading:true,
+            headers:{
+                username: layui.data(setter.appIdKey).appIdKey,
+                deviceInfo:layui.device('myapp').os,
+                authorization:layui.data(setter.jwtKey).jwtKey
+            },
+            page:true,
+            parseData: function(res){ //res 即为原始返回的数据
+                if (setter.accessStatus(res,this)) {
+                    return false;
+                }
+                return {
+                    "code": 0, //解析接口状态
+                    "msg": '获取数据成功', //解析提示文本
+                    "count": res.data.total, //解析数据长度
+                    "data": res.data.rows //解析数据列表
+                };
+            },
+            cols: [[{
+                type: "checkbox",
+                fixed: "left"
+            },
+                {
+                    field: "",
+                    width: 60,
+                    title: "序号",
+                    align: 'center',
+                    // sort: !0,
+                    templet: function(obj){
+                        return '<span>'+ obj.LAY_INDEX +'</span>'
+                    }
+                },
+                {
+                    field: "code",
+                    title: "权限类型"
+                },
+                {
+                    field: "name",
+                    title: "权限名称"
+                },
+                {
+                    field: "method",
+                    title: "请求类型"
+                },
+                {
+                    field: "uri",
+                    title: "请求路径",
+                    minWidth:120
+                },
+                {
+                    field: "roleName",
+                    title: "角色名称",
+                    minWidth:90
+                },
+                {
+                    field: "status",
+                    title: "状态",
+                    templet: "#statusTpl",
+                    minWidth: 80,
+                    align: "center"
+                },
+                {
+                    title: "操作",
+                    width: 150,
+                    align: "center",
+                    fixed: "right",
+                    toolbar: "#table-useradmin-admin"
+                }]],
+            text: "对不起，加载出现异常！"
+        }),
+        table.on("tool(LAY-user-back-role)",
+            function(e) {
+                e.data;
+                if ("del" === e.event) layer.confirm("确定删除此角色？",
+                    function(t) {
+                        e.del(),
+                            layer.close(t)
+                    });
+                else if ("edit" === e.event) {
+                    t(e.tr);
+                    layer.open({
+                        type: 2,
+                        title: "添加",
+                        content: "../../../views/user/administrators/permissionInfo.html",
+                        area: ["500px", "480px"],
+                        btn: ["确定", "取消"],
+                        yes: function(e, t) {
+                            var l = window["layui-layer-iframe" + e],
+                                r = t.find("iframe").contents().find("#LAY-user-role-submit");
+                            l.layui.form.on("submit(LAY-user-role-submit)",
+                                function(t) {
+                                    t.field;
+                                    table.reload("LAY-user-back-role"),
+                                        layer.close(e)
+                                }),
+                                r.trigger("click")
+                        },
+                        success: function(e, t) {}
+                    })
+                }
+            }),
+
             e("useradmin", {})
     });

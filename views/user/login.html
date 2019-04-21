@@ -58,7 +58,7 @@
           <a href="forget.html" class="layadmin-user-jump-change layadmin-link" style="margin-top: 7px;">忘记密码？</a>
         </div>
         <div class="layui-form-item">
-          <button class="btn mt-4 btn-primary btn-block" lay-submit lay-filter="user-login-submit">登 入</button>
+          <button class="btn mt-4 btn-primary btn-block hvr-sweep-to-right" id="LAY-user-login-submit" lay-submit lay-filter="user-login-submit">登 陆</button>
         </div>
       </div>
 
@@ -70,6 +70,7 @@
 
 <script src="../../assets/layui/layui.js"></script>
 <script src="../../assets/plugins/aes/aes.js"></script>
+<script src="../../assets/plugins/topbar/topbar.min.js"></script>
 <script src="../../assets/plugins/aes/pad-zeropadding-min.js"></script>
 <script>
     if(window !=top){
@@ -86,7 +87,7 @@
             ,setter = layui.setter
             ,admin = layui.admin
             ,form = layui.form
-            ,router = layui.router();
+            ,reqSetter = layui.reqSetter;
 
         form.render();
 
@@ -95,9 +96,41 @@
             // layer.alert(JSON.stringify(data.field), {
             //     title: '最终的提交信息'
             // });
+            loginKey(data);
+          });
+
+        document.onkeydown = function (event) {
+            var e = event || window.event || arguments.callee.caller.arguments[0];
+            if (e && e.keyCode == 13) {
+                $("#LAY-user-login-submit").trigger("click");
+            }
+        };
+
+        window.loginShow = function () {
+            topbar.config({
+                autoRun      : false,
+                barThickness : 3,
+                barColors    : {
+                    '0'        : 'rgba(100, 181, 246)',
+                    '.5'       : 'rgba(41, 182, 246)',
+                    '1.0'      : 'rgba(33, 150, 243)'
+                },
+                shadowBlur   : 3,
+                shadowColor  : 'rgba(0, 0, 0, .5)'
+            });
+            topbar.show();
+            (function step() {
+                setTimeout(function() {
+                    if (topbar.progress('+.01') < 1) step()
+                }, 16)
+            })();
+        };
+
+        window.loginKey = function (data) {
+            loginShow();
             //请求登入接口
             admin.req({
-                url: layui.setter.reqBase + 'account/login' //实际使用请改成服务端真实接口
+                url: reqSetter.requestPath.loginApi //实际使用请改成服务端真实接口
                 ,data: {tokenKey: 'get'}
                 ,dataType:"json"
                 ,type:'GET'
@@ -106,23 +139,26 @@
                 ,crossDomain:true
                 ,beforeSend: function(xhr) {
                     xhr.withCredentials = true;
-                 }
+                }
                 ,done: function(result){
                     //请求成功后，写入 access_token
                     layui.data(setter.userKey,
-                            {
-                                key: setter.userKey
-                                ,value: result.data.userKey
-                            });
+                        {
+                            key: setter.userKey
+                            ,value: result.data.userKey
+                        });
                     layui.data(setter.tokenKey,{
-                                key: setter.tokenKey
-                                ,value: result.data.tokenKey
-                            }
-                        );
+                            key: setter.tokenKey
+                            ,value: result.data.tokenKey
+                        }
+                    );
                     loginUser(data);
+                },failed: function(e,m) {
+                    layer.alert(m,{icon:2});
+                    topbar.hide();
                 }
             });
-          });
+        };
 
          window.Encrypt=function(password,key){
             var tokenKey = CryptoJS.enc.Utf8.parse(key);
@@ -141,7 +177,7 @@
               data.field.timestamp=new Date().toUTCString();
               data.field.password = Encrypt(data.field.password,tokenKey.tokenKey);
               admin.req({
-                  url: layui.setter.reqBase + 'account/login' //实际使用请改成服务端真实接口
+                  url: reqSetter.requestPath.loginApi //实际使用请改成服务端真实接口
                   ,data: JSON.stringify(data.field)
                   ,dataType:"json"
                   ,type:'POST'
@@ -159,13 +195,22 @@
                               key: setter.jwtKey
                               ,value: result.data.jwt
                           });
+                      layui.data(setter.appIdKey,
+                          {
+                              key: setter.appIdKey
+                              , value: data.field.username
+                          });
                       layer.msg('登入成功', {
                           offset: '15px'
                           ,icon: 1
                           ,time: 1000
                       }, function(){
+                          topbar.hide();
                           location.href = '../index.html'; //后台主页
                       });
+                  },failed: function(e,m) {
+                      layer.alert(m,{icon:2});
+                      topbar.hide();
                   }
               });
           }

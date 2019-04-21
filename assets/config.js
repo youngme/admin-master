@@ -1,12 +1,4 @@
-/**
 
- @Name：layuiAdmin iframe版全局配置
- @Author：贤心
- @Site：http://www.layui.com/admin/
- @License：LPPL（layui付费产品协议）
-    
- */
- 
 layui.define(['laytpl', 'layer', 'element', 'util'], function(exports){
   exports('setter', {
     container: 'LAY_app' //容器ID
@@ -17,19 +9,20 @@ layui.define(['laytpl', 'layer', 'element', 'util'], function(exports){
     ,entry: 'index' //默认视图文件名
     ,engine: '.html' //视图文件后缀名
     ,pageTabs: true //是否开启页面选项卡功能。iframe版推荐开启
-    
     ,name: 'layuiAdmin'
     ,tableName: 'layuiAdmin' //本地存储表名
-    ,httpKey: 'userKey' //本地存储表名
+    ,tableHeight:'full-309'
+    ,httpKey: 'httpKey' //本地存储表名
     ,userKey:'userKey'
+    ,appIdKey:'appIdKey'
     ,jwtKey:'jwtKey'
     ,tokenKey:'tokenKey'
     ,MOD_NAME: 'admin' //模块事件名
     ,roleKey:"roleKey"
     ,aboutHtml:"../../views/tpl/system/about"//关于介绍的地址路径
     ,themeHtml:"../../views/tpl/system/theme"//关于主题的地址路径
+    ,logoutHtml:"/admin-master/views/user/login.html"
     ,debug: true //是否开启调试模式。如开启，接口异常时会抛出异常 URL 等信息
-
     //自定义请求字段
     ,request: {
       tokenName: false //自动携带 token 的字段名（如：access_token）。可设置 false 不携带。
@@ -40,7 +33,8 @@ layui.define(['laytpl', 'layer', 'element', 'util'], function(exports){
       statusName: 'code' //数据状态的字段名称
       ,statusCode: {
         ok: 200 //数据状态一切正常的状态码
-        ,logout: 1001 //登录状态失效的状态码
+        ,logout: 424 //登录状态失效的状态码
+        ,unAuthor:100403 //请求为授权
       }
       ,msgName: 'msg' //状态信息的字段名称
       ,dataName: 'data' //数据详情的字段名称
@@ -154,6 +148,17 @@ layui.define(['laytpl', 'layer', 'element', 'util'], function(exports){
       },
       padLeftZero:function(str) {
         return ('00' + str).substr(str.length);
-    }
+    },
+      accessStatus: function (res,table) {
+          let status = this.response.statusCode;
+          switch (res.code) {
+              case status.logout:
+                  window.location=location.origin+this.logoutHtml;
+                  return true;
+              case status.unAuthor:
+                  table.text.none = res.msg;
+                  return true;
+          }
+      }
   });
 });

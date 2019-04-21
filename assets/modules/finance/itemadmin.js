@@ -3,10 +3,11 @@ layui.define(["table", "form"],
         var t = layui.$,
             table = layui.table,
             setter = layui.setter,
+            financeSetter = layui.financeSetter,
             reqSetter = layui.reqSetter,
             element = layui.element,
             form = layui.form;
-        //初始化用户信息分页
+        //初始化项目信息分页
         table.render({
             elem: "#PAGE-item-list",
             url: reqSetter.requestPath.itemPageApi,
@@ -16,15 +17,9 @@ layui.define(["table", "form"],
                 deviceInfo:layui.device('myapp').os,
                 authorization:layui.data(setter.jwtKey).jwtKey
             },
-            // page: {
-            //     prev:'上一页',
-            //     next:'下一页',
-            //     first:'第一页',
-            //     last:'最后一页',
-            //     groups:5,
-            //     theme:'#29B6F6',
-            //     layout:['prev', 'page', 'next','limit','count','first','last']
-            // }, //开启分页
+            text:{
+                none: '暂无项目信息'
+            },
             page:true,
             parseData: function(res){ //res 即为原始返回的数据
                 if (setter.accessStatus(res,this)) {
@@ -86,8 +81,7 @@ layui.define(["table", "form"],
                     align: "center",
                     fixed: "right",
                     toolbar: "#table-useradmin-admin"
-                }]],
-            text: "对不起，加载出现异常！"
+                }]]
         }),
             table.on("tool(PAGE-item-list)",
                 function(e) {
@@ -175,31 +169,12 @@ layui.define(["table", "form"],
                             },
                             success: function(layero, index) {
                                 var body = layui.layer.getChildFrame('body', index);
-                                var roleList = layui.sessionData(layui.setter.roleKey);
-                                if(roleList){
-                                    var list = roleList.roleKey;
-                                    for (let i = 0; i < list.length; i++) {
-                                        var option = '<option value="'+list[i].id+'">'+list[i].name+'</option>';
-                                        body.find("select[name='roleId']").append(option);
-                                    };
-                                }
-                                form.render("select");
-                                // console.log(data);
-                                body.find('[name="username"]').val(data.username);
-                                body.find('[name="roleId"]').val(data.roleId);
-                                body.find('[name="email"]').val(data.email);
-                                body.find('[name="realName"]').val(data.realName);
-                                body.find('[name="password"]').val(data.password);
-                                body.find('[name="phone"]').val(data.phone);
-                                body.find('[name="sex"]').val(data.sex);
-                                if(data.status==1){
-                                    body.find('[name="status"]').attr("checked","checked");
-                                }
-                                form.render();
+                                body.find("#ID-itemId").val(data.id);
+                                // form.render();
                             }
                         });
                         layer.full(infoLayer);
                     }
                 }),
-            e("itemadmin", {})
+            e("finance/itemadmin", {})
     });

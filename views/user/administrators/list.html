@@ -95,6 +95,7 @@
     ,form = layui.form
     ,table = layui.table
     ,setter = layui.setter
+    ,reqSetter = layui.reqSetter
     ,admin = layui.admin;
 
       var roleList = layui.sessionData(setter.roleKey);
@@ -166,7 +167,7 @@
               //提交 Ajax 成功后，静态更新表格中的数据
                 //获取角色列表
                 admin.req({
-                    url: layui.setter.reqBase + 'user/save'
+                    url: reqSetter.requestPath.saveUserApi
                     ,dataType:"json"
                     ,data:field
                     ,type:'POST'

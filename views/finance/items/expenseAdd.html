@@ -1,10 +1,97 @@
+
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="utf-8">
+    <title>assets 管理员 iframe 框</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../assets/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../assets/style/define.css" media="all">
 </head>
 <body>
 
+<div class="layui-form" lay-filter="assets-form-admin" id="assets-form-admin" style="padding: 30px 30px 0 0;">
+    <div class="layui-form-item">
+        <label class="layui-form-label">款项名称</label>
+        <div class="layui-input-inline">
+            <input type="text" name="expenseName" lay-verify="required" placeholder="请输入款项名称" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">支出金额</label>
+        <div class="layui-input-inline">
+            <input type="number" name="moneyExpense" lay-verify="required" placeholder="请输入支出金额" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">支出人员</label>
+        <div class="layui-input-inline">
+            <input type="text" name="createPerson" lay-verify="required" placeholder="请输入支出人员" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">支出日期</label>
+        <div class="layui-input-inline">
+            <input type="hidden" name="createTime" id="ID-createTime">
+            <div id="LAY-createTime" class="layui-date-div"></div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-inline">
+            <input type="text" name="remark" placeholder="请输入备注" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="submit" lay-submit lay-filter="LAY-save" id="LAY-save">
+    </div>
+</div>
+
+<script src="../../../assets/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '../../../assets/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index','laydate','form'], function(){
+        var $ = layui.jquery
+            ,form = layui.form
+            ,laydate = layui.laydate;
+
+        $("#ID-createTime").val(new Date().getTime());
+
+        laydate.render({
+            elem: '#LAY-createTime'
+            ,format: 'yyyy年MM月dd日'
+            ,btns: ['clear', 'now']
+            ,value:new Date()
+            ,done: function(value, date, endDate){
+                // console.log(value); //得到日期生成的值，如：2017-08-18
+                if (value != "") {
+                    let datee = new Date();
+                    let newDate = date.year + "-" + date.month + "-" + date.date + " " + datee.getHours() + ":" + datee.getMinutes() + ":" + datee.getSeconds();
+                    $("#ID-createTime").val(new Date(newDate).getTime());
+                }
+            }
+        });
+
+        //自定义验证规则
+        form.verify({
+            pass: [
+                /^[\S]{6,12}$/
+                ,'密码必须6到12位，且不能出现空格'
+            ]
+            ,role: function(value){
+                if(value<0){
+                    return "请选择一个角色"
+                }
+            }
+        });
+
+    })
+</script>
 </body>
 </html>
